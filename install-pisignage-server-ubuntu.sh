@@ -23,13 +23,14 @@ echo "
   MONGODB
 ----------------------
 "
-# import mongodb 7.0 public gpg key
-curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | \
-   sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg \
-   --dearmor
-apt-key list
-# create the /etc/apt/sources.list.d/mongodb-org-7.0.list file for mongodb
-echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+# import mongodb 8.0 public gpg key
+curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | \
+gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg \
+--dearmor
+
+# create the /etc/apt/sources.list.d/mongodb-org-8.0.list file for mongodb
+echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+
 # reload local package database
 sudo apt update
 # install the latest version of mongodb
@@ -68,16 +69,17 @@ echo "
 ----------------------
 "
 # allow ssh connections through firewall
-sudo ufw allow OpenSSH
+sudo apt install -y ufw
+sudo ufw allow 22/tcp
+sudo ufw allow 3000/tcp
 sudo ufw --force enable
 
-cat <<EOF > /etc/systemd/system/pisignage.service
+sudo cat <<EOF > /etc/systemd/system/pisignage.service
 
 [Unit]
 Description=pisignage Player -  Server Software
 #Include the After directive to make sure mongodb is running
 After=mogodb.service
-
 
 [Service]
 # Key `User` specifies that the server will run under the pisignage user 
@@ -91,9 +93,15 @@ ExecStart=/usr/bin/node /root/pisignage-server/server.js >> /var/log/pisignage.l
 #StandardOutput=
 #StandardError=/var/log/pisignageserver.log
 Environment=NODE_ENV=development PORT=3000
+
 [Install]
 WantedBy=multi-user.target
 EOF
 
+sudo systemctl daemon-reload
 sudo systemctl enable pisignage.service
 sudo systemctl start pisignage.service
+
+sudo journalctl -u pisignage.service -n 200 
+
+
