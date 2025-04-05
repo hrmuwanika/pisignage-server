@@ -39,7 +39,7 @@ sudo systemctl start mongod
 # set mongodb to start automatically on system startup
 sudo systemctl enable mongod
 
-cd /opt/
+cd /
 
 # check /data/db directory present if not create
 if [ ! -d "$DBDIR" ];then
@@ -64,20 +64,36 @@ sudo chmod 755 -R ./media
 
 echo "
 ----------------------
-  NGINX
-----------------------
-"
-# install nginx
-sudo apt install -y nginx
-
-echo "
-----------------------
   UFW (FIREWALL)
 ----------------------
 "
 # allow ssh connections through firewall
 sudo ufw allow OpenSSH
-# allow http & https through firewall
-sudo ufw allow 'Nginx Full'
-# enable firewall
 sudo ufw --force enable
+
+cat <<EOF > /etc/systemd/system/pisignage.service
+
+[Unit]
+Description=pisignage Player -  Server Software
+#Include the After directive to make sure mongodb is running
+After=mogodb.service
+
+
+[Service]
+# Key `User` specifies that the server will run under the pisignage user 
+# Hash User & Group out if you want root to run it
+#User=pisignage
+#Group=pisignage 
+Restart=always
+RestartSec=10
+WorkingDirectory=/root/pisignage-server
+ExecStart=/usr/bin/node /root/pisignage-server/server.js >> /var/log/pisignage.log 2>&1
+#StandardOutput=
+#StandardError=/var/log/pisignageserver.log
+Environment=NODE_ENV=development PORT=3000
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl enable pisignage.service
+sudo systemctl start pisignage.service
