@@ -6,7 +6,7 @@ sudo apt autoremove
 DBDIR="/data/db"
 
 # install build essentials
-sudo apt install -y build-essential wget gnupg
+sudo apt install -y build-essential wget gnupg nano
 
 echo "
 ----------------------
