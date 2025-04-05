@@ -39,11 +39,13 @@ sudo systemctl start mongod
 # set mongodb to start automatically on system startup
 sudo systemctl enable mongod
 
+cd /opt/
+
 # check /data/db directory present if not create
 if [ ! -d "$DBDIR" ];then
 	sudo mkdir -p /data/db
 fi
-#chagne permission
+#change permission
 sudo chmod -R 755 /data/
 
 echo "
