@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+DBDIR = ""
+
 # install build essentials
 sudo apt install -y build-essential wget gnupg
 
@@ -33,6 +35,13 @@ sudo apt install -y mongodb-org
 sudo systemctl start mongod
 # set mongodb to start automatically on system startup
 sudo systemctl enable mongod
+
+# check /data/db directory present if not create
+if [ ! -d "$DBDIR" ];then
+	sudo mkdir -p /data/db
+fi
+#chagne permission
+sudo chmod -R 755 /data/
 
 echo "
 -----------------------------------
