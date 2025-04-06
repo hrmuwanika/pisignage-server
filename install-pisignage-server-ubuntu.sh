@@ -100,6 +100,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable pisignage.service
 sudo systemctl start pisignage.service
 
-sudo journalctl -u pisignage.service -n 200 
+echo " Pisignage server installation is completed"
+# sudo journalctl -u pisignage.service -n 200 
 
 
