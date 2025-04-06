@@ -6,7 +6,7 @@ sudo apt autoremove
 DBDIR="/data/db"
 
 # install build essentials
-sudo apt install -y build-essential wget gnupg nano curl git imagemagick
+sudo apt install -y build-essential wget gnupg nano curl git imagemagick ffmpeg
 
 echo "
 ----------------------
@@ -59,6 +59,7 @@ npm install
 #create media and thumbnail directory
 cd ..
 mkdir media
+mkdir media/_thumbnails
 sudo chmod 755 -R ./media
 
 echo "
